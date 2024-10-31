@@ -3,4 +3,3 @@ function greet(name: string) {
 }
 
 greet("John");
-
