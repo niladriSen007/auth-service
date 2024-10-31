@@ -1,5 +1,6 @@
-function greet(name: string) {
-  return "Hello, World!" + name;
-}
+const user = {
+    name: 'Nil',
+};
 
-greet("John");
+const newName = 'Raj' + user.name;
+console.log(newName); // RajNil
