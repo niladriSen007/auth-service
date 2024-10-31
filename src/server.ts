@@ -1,6 +1,3 @@
-const user = {
-    name: 'Nil',
-};
+import { Config } from './config';
 
-const newName = 'Raj' + user.name;
-console.log(newName); // RajNil
+console.log(Config.PORT);
