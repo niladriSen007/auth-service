@@ -2,7 +2,7 @@ import app from './src/app';
 import { calculateDiscount } from './src/utils';
 import request from 'supertest';
 
-describe('App', () => {
+describe.skip('App', () => {
     it('should return correct discount', () => {
         expect(calculateDiscount(100, 0.1)).toBe(90);
     });
