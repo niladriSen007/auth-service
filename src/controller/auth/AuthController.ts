@@ -1,19 +1,9 @@
-import { Request, Response } from 'express';
-import { AppDataSource } from '../../config/data-source';
-import { User } from '../../entity/User';
-
-interface UserData {
-    firstName: string;
-    lastName: string;
-    email: string;
-    password: string;
-}
-
-export interface UserRegisterRequest extends Request {
-    body: UserData;
-}
+import { Response } from 'express';
+import { UserService } from '../../services/user/UserService';
+import { UserRegisterRequest } from '../../types';
 
 export class AuthController {
+    constructor(private readonly userService: UserService) {}
     async register(req: UserRegisterRequest, res: Response) {
         if (
             !req?.body.firstName ||
@@ -27,8 +17,7 @@ export class AuthController {
         }
         const { firstName, lastName, email, password } = req.body;
 
-        const userRepo = AppDataSource.getRepository(User);
-        await userRepo.save({
+        await this.userService.registerUser({
             firstName,
             lastName,
             email,
