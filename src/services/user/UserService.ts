@@ -1,7 +1,7 @@
+import createHttpError from 'http-errors';
 import { Repository } from 'typeorm';
 import { User } from '../../entity/User';
 import { UserData } from '../../types';
-import createHttpError from 'http-errors';
 
 export class UserService {
     constructor(private readonly userRepository: Repository<User>) {}

@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 import request from 'supertest';
-import app from '../../src/app';
 import { DataSource } from 'typeorm';
+import app from '../../src/app';
 import { AppDataSource } from '../../src/config/data-source';
-import { truncateTables } from '../utils';
 import { User } from '../../src/entity/User';
+import { Roles } from '../../src/entity/enum/Roles';
 
 describe('POST /auth/register', () => {
     let dataSource: DataSource;
@@ -14,12 +14,14 @@ describe('POST /auth/register', () => {
     });
 
     beforeEach(async () => {
-        await truncateTables(dataSource);
+        /* await truncateTables(dataSource); */
+        await dataSource.dropDatabase();
+        await dataSource.synchronize();
     });
 
-    afterAll(async () => {
+    /*  afterAll(async () => {
         await dataSource.destroy();
-    });
+    }); */
 
     describe('All input fields are properly filled', () => {
         it('Should return status 201', async () => {
@@ -121,6 +123,28 @@ describe('POST /auth/register', () => {
             expect(users[0].email).toBe('nil@1,com');
             expect(users[0].firstName).toBe('Niladri');
             expect(users[0].lastName).toBe('Sen');
+        });
+
+        it('Should have a specific CUSTOMER role for the user', async () => {
+            //AAA
+            //Arrange
+            const userData = {
+                firstName: 'Niladri',
+                lastName: 'Sen',
+                email: 'nil@1,com',
+                password: '1',
+            };
+            //Act
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            const response = await request(app)
+                .post('/auth/register')
+                .send(userData);
+
+            //Assert
+            const userRepo = dataSource.getRepository(User);
+            const users = await userRepo.find();
+            expect(users[0]).toHaveProperty('roles');
+            expect(users[0].roles).toContain(Roles.CUSTOMER);
         });
     });
 
