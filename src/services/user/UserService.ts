@@ -10,6 +10,15 @@ export class UserService {
         private readonly helperService: HelperService,
     ) {}
     async registerUser({ firstName, lastName, email, password }: UserData) {
+        //const existingUser = await this.userRepository.findOneBy({ email });
+        //or
+        const existingUser = await this.userRepository.findOne({
+            where: { email },
+        });
+        if (existingUser) {
+            const error = createHttpError(400, 'User already exists');
+            throw error;
+        }
         const hashedPassword = await this.helperService.hashPassword(password);
         try {
             await this.userRepository.save({

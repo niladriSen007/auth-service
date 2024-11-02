@@ -157,10 +157,8 @@ describe('POST /auth/register', () => {
                 password: '1',
             };
             //Act
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            const response = await request(app)
-                .post('/auth/register')
-                .send(userData);
+             
+            await request(app).post('/auth/register').send(userData);
 
             //Assert
             const userRepo = dataSource.getRepository(User);
@@ -169,6 +167,29 @@ describe('POST /auth/register', () => {
             expect(users[0].password).not.toBe(userData.password);
             expect(users[0].password).toHaveLength(60);
             expect(users[0].password).toMatch(/^\$2b\$\d+\$/);
+        });
+
+        it("Should return status 400 if the user's email is already registered", async () => {
+            //AAA
+            //Arrange
+            const userData = {
+                firstName: 'Niladri',
+                lastName: 'Sen',
+                email: 'nil@1,com',
+                password: '1',
+            };
+            const userRepo = dataSource.getRepository(User);
+            await userRepo.save(userData);
+            const users = await userRepo.find();
+
+            //Act
+            const response = await request(app)
+                .post('/auth/register')
+                .send(userData);
+
+            //Assert
+            expect(response.statusCode).toBe(400);
+            expect(users).toHaveLength(1);
         });
     });
 
