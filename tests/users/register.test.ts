@@ -157,13 +157,13 @@ describe('POST /auth/register', () => {
                 password: '1',
             };
             //Act
-             
+
             await request(app).post('/auth/register').send(userData);
 
             //Assert
             const userRepo = dataSource.getRepository(User);
             const users = await userRepo.find();
-            console.log(users[0].password);
+            /* console.log(users[0].password); */
             expect(users[0].password).not.toBe(userData.password);
             expect(users[0].password).toHaveLength(60);
             expect(users[0].password).toMatch(/^\$2b\$\d+\$/);
@@ -193,7 +193,7 @@ describe('POST /auth/register', () => {
         });
     });
 
-    describe.skip('Some input fields are not filled properly', () => {
+    describe('Some input fields are not filled properly', () => {
         it('Should return status 400', async () => {
             //AAA
             //Arrange
@@ -207,8 +207,11 @@ describe('POST /auth/register', () => {
             const response = await request(app)
                 .post('/auth/register')
                 .send(userData);
+            const userRepo = dataSource.getRepository(User);
+            const users = await userRepo.find();
             //Assert
             expect(response.statusCode).toBe(400);
+            expect(users).toHaveLength(0);
         });
     });
 });

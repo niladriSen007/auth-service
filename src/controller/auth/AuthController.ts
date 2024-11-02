@@ -1,4 +1,5 @@
 import { NextFunction, Response } from 'express';
+import { validationResult } from 'express-validator';
 import { Logger } from 'winston';
 import { UserService } from '../../services/user/UserService';
 import { UserRegisterRequest } from '../../types';
@@ -13,18 +14,20 @@ export class AuthController {
         res: Response,
         next: NextFunction,
     ) {
-        const { firstName, lastName, email, password } = req.body;
+        const result = validationResult(req);
+        if (!result.isEmpty()) {
+            this.logger.error('Validation error', {
+                errors: result.array(),
+            });
+            return res.status(400).json({ errors: result.array() });
+        }
+        const { firstName, lastName, email } = req.body;
         this.logger.debug('New request to register a user', {
             firstName,
             lastName,
             email,
             password: '********',
         });
-        if (!firstName || !lastName || !email || !password) {
-            return res
-                .status(400)
-                .json({ message: 'All input fields are required' });
-        }
         try {
             const { firstName, lastName, email, password } = req.body;
 
