@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import 'reflect-metadata';
 import express, { NextFunction, Request, Response } from 'express';
 import { logger } from './config/logger';
 import authRouter from './routes/auth/auth';

@@ -59,6 +59,24 @@ describe('POST /auth/register', () => {
                 'User registered successfully',
             );
         });
+
+        it('Should persist the user data in database', async () => {
+            //AAA
+            //Arrange
+            const userData = {
+                firstName: 'Niladri',
+                lastName: 'Sen',
+                email: 'nil@1,com',
+                password: '1',
+            };
+            //Act
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            const response = await request(app)
+                .post('/auth/register')
+                .send(userData);
+
+            //Assert
+        });
     });
 
     describe.skip('Some input fields are not filled properly', () => {
