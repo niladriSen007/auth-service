@@ -8,6 +8,7 @@ describe.skip('App', () => {
     });
 
     it('should return status code 200', async () => {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
         const response = await request(app).get('/').send();
         expect(response.statusCode).toBe(200);
     });
