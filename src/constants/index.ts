@@ -3,3 +3,4 @@ export const Roles = {
     CUSTOMER: 'CUSTOMER',
     MANAGER: 'MANAGER',
 } as const;
+export const SALTROUNDS = 10;

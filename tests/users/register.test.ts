@@ -146,6 +146,30 @@ describe('POST /auth/register', () => {
             expect(users[0]).toHaveProperty('roles');
             expect(users[0].roles).toContain(Roles.CUSTOMER);
         });
+
+        it('Should store the password as hashed format in the database', async () => {
+            //AAA
+            //Arrange
+            const userData = {
+                firstName: 'Niladri',
+                lastName: 'Sen',
+                email: 'nil@1,com',
+                password: '1',
+            };
+            //Act
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            const response = await request(app)
+                .post('/auth/register')
+                .send(userData);
+
+            //Assert
+            const userRepo = dataSource.getRepository(User);
+            const users = await userRepo.find();
+            console.log(users[0].password);
+            expect(users[0].password).not.toBe(userData.password);
+            expect(users[0].password).toHaveLength(60);
+            expect(users[0].password).toMatch(/^\$2b\$\d+\$/);
+        });
     });
 
     describe.skip('Some input fields are not filled properly', () => {
