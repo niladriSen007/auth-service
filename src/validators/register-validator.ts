@@ -1,6 +1,6 @@
-import { body } from 'express-validator';
+import { checkSchema } from 'express-validator';
 
-export default [
+/* export default [
     body('email').isString().withMessage('Email is required').notEmpty().trim(),
     body('password')
         .isString()
@@ -17,33 +17,40 @@ export default [
         .notEmpty()
         .withMessage('Last name is required')
         .trim(),
-];
+]; */
 
-/* export default checkSchema({
-  email: {
-    errorMessage: 'Email is required',
-    isEmail: true,
-    notEmpty: true,
-  },
-  password: {
-    isLength: {
-      options: { min: 1 },
-      errorMessage: 'Password should be at least 1 chars',
+export default checkSchema({
+    email: {
+        trim: true,
+        errorMessage: 'Email is required',
+        isEmail: {
+            errorMessage: 'Invalid email format',
+        },
+        notEmpty: true,
     },
-    isString: true,
-    notEmpty: true,
-  },
-  firstName: {
-    isLength: {
-      options: { min: 1 },
-      errorMessage: 'First name should be at least 1 chars',
+    password: {
+        trim: true,
+        errorMessage: 'Password is required',
+        isLength: {
+            options: { min: 1 },
+            errorMessage: 'Password should be at least 1 chars',
+        },
+        notEmpty: true,
     },
-
-  },
-  lastName: {
-    isLength: {
-      options: { min: 1 },
-      errorMessage: 'Last name should be at least 1 chars',
+    firstName: {
+        isLength: {
+            options: { min: 1 },
+            errorMessage: 'First name should be at least 1 chars',
+        },
+        notEmpty: true,
+        trim: true,
     },
-  },
-}); */
+    lastName: {
+        isLength: {
+            options: { min: 1 },
+            errorMessage: 'Last name should be at least 1 chars',
+        },
+        notEmpty: true,
+        trim: true,
+    },
+});

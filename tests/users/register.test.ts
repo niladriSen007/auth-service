@@ -47,7 +47,7 @@ describe('POST /auth/register', () => {
             const userData = {
                 firstName: 'Niladri',
                 lastName: 'Sen',
-                email: 'nil@1,com',
+                email: 'nil@1.com',
                 password: '1',
             };
 
@@ -68,7 +68,7 @@ describe('POST /auth/register', () => {
             const userData = {
                 firstName: 'Niladri',
                 lastName: 'Sen',
-                email: 'nil@1,com',
+                email: 'nil@1.com',
                 password: '1',
             };
             //Act
@@ -76,6 +76,7 @@ describe('POST /auth/register', () => {
                 .post('/auth/register')
                 .send(userData);
             //Assert
+            expect(response.body).toHaveProperty('message');
             expect((response.body as Record<string, string>).message).toEqual(
                 'User registered successfully',
             );
@@ -87,7 +88,7 @@ describe('POST /auth/register', () => {
             const userData = {
                 firstName: 'Niladri',
                 lastName: 'Sen',
-                email: 'nil@1,com',
+                email: 'nil@1.com',
                 password: '1',
             };
             //Act
@@ -108,7 +109,7 @@ describe('POST /auth/register', () => {
             const userData = {
                 firstName: 'Niladri',
                 lastName: 'Sen',
-                email: 'nil@1,com',
+                email: 'nil@1.com',
                 password: '1',
             };
             //Act
@@ -120,9 +121,9 @@ describe('POST /auth/register', () => {
             //Assert
             const userRepo = dataSource.getRepository(User);
             const users = await userRepo.find();
-            expect(users[0].email).toBe('nil@1,com');
-            expect(users[0].firstName).toBe('Niladri');
-            expect(users[0].lastName).toBe('Sen');
+            expect(users[0].email).toEqual('nil@1.com');
+            expect(users[0].firstName).toEqual('Niladri');
+            expect(users[0].lastName).toEqual('Sen');
         });
 
         it('Should have a specific CUSTOMER role for the user', async () => {
@@ -131,7 +132,7 @@ describe('POST /auth/register', () => {
             const userData = {
                 firstName: 'Niladri',
                 lastName: 'Sen',
-                email: 'nil@1,com',
+                email: 'nil@1.com',
                 password: '1',
             };
             //Act
@@ -153,7 +154,7 @@ describe('POST /auth/register', () => {
             const userData = {
                 firstName: 'Niladri',
                 lastName: 'Sen',
-                email: 'nil@1,com',
+                email: 'nil@1.com',
                 password: '1',
             };
             //Act
@@ -175,7 +176,7 @@ describe('POST /auth/register', () => {
             const userData = {
                 firstName: 'Niladri',
                 lastName: 'Sen',
-                email: 'nil@1,com',
+                email: 'nil@1.com',
                 password: '1',
             };
             const userRepo = dataSource.getRepository(User);
@@ -222,7 +223,7 @@ describe('POST /auth/register', () => {
             const userData = {
                 firstName: 'Niladri',
                 lastName: 'Sen',
-                email: '   nil@1,com   ',
+                email: '   nil@1.com   ',
                 password: '1',
             };
             //Act
@@ -230,7 +231,27 @@ describe('POST /auth/register', () => {
             //Assert
             const userRepo = dataSource.getRepository(User);
             const users = await userRepo.find();
-            expect(users[0].email).toBe('nil@1,com');
+            expect(users[0]?.email).toEqual('nil@1.com');
+        });
+
+        it("Should return status 400 if the email field doesn't meet the email format", async () => {
+            //AAA
+            //Arrange
+            const userData = {
+                firstName: 'Niladri',
+                lastName: 'Sen',
+                email: 'nil1com',
+                password: '1',
+            };
+            //Act
+            const response = await request(app)
+                .post('/auth/register')
+                .send(userData);
+            const userRepo = dataSource.getRepository(User);
+            const users = await userRepo.find();
+            //Assert
+            expect(response.statusCode).toBe(400);
+            expect(users).toHaveLength(0);
         });
     });
 });

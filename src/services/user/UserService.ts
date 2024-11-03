@@ -20,8 +20,9 @@ export class UserService {
             throw error;
         }
         const hashedPassword = await this.helperService.hashPassword(password);
+
         try {
-            await this.userRepository.save({
+            return await this.userRepository.save({
                 firstName,
                 lastName,
                 email,
