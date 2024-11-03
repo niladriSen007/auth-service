@@ -1,14 +1,22 @@
- 
 import { body } from 'express-validator';
 
 export default [
-    body('email').isString().notEmpty().withMessage('Email is required').trim(),
-    body('password').isString().notEmpty().withMessage('Password is required'),
+    body('email').isString().withMessage('Email is required').notEmpty().trim(),
+    body('password')
+        .isString()
+        .notEmpty()
+        .withMessage('Password is required')
+        .trim(),
     body('firstName')
         .isString()
         .notEmpty()
-        .withMessage('First name is required'),
-    body('lastName').isString().notEmpty().withMessage('Last name is required'),
+        .withMessage('First name is required')
+        .trim(),
+    body('lastName')
+        .isString()
+        .notEmpty()
+        .withMessage('Last name is required')
+        .trim(),
 ];
 
 /* export default checkSchema({
