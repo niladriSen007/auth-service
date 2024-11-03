@@ -253,5 +253,27 @@ describe('POST /auth/register', () => {
             expect(response.statusCode).toBe(400);
             expect(users).toHaveLength(0);
         });
+
+        it('Should return status 400 if the password is less than 1 characters', async () => {
+            //AAA
+            //Arrange
+            const userData = {
+                firstName: 'Niladri',
+                lastName: 'Sen',
+                email: 'nil@1.com',
+                password: '',
+            };
+
+            //Act
+            const response = await request(app)
+                .post('/auth/register')
+                .send(userData);
+
+            const userRepo = dataSource.getRepository(User);
+            const users = await userRepo.find();
+            //Assert
+            expect(response.statusCode).toBe(400);
+            expect(users).toHaveLength(0);
+        });
     });
 });
