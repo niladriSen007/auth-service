@@ -1,8 +1,8 @@
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { body, checkSchema } from 'express-validator';
+ 
+import { body } from 'express-validator';
 
 export default [
-    body('email').isString().notEmpty().withMessage('Email is required'),
+    body('email').isString().notEmpty().withMessage('Email is required').trim(),
     body('password').isString().notEmpty().withMessage('Password is required'),
     body('firstName')
         .isString()

@@ -214,4 +214,23 @@ describe('POST /auth/register', () => {
             expect(users).toHaveLength(0);
         });
     });
+
+    describe("Fields are not in the correct format or don't meet the requirements", () => {
+        it('Should trim the email field', async () => {
+            //AAA
+            //Arrange
+            const userData = {
+                firstName: 'Niladri',
+                lastName: 'Sen',
+                email: '   nil@1,com   ',
+                password: '1',
+            };
+            //Act
+            await request(app).post('/auth/register').send(userData);
+            //Assert
+            const userRepo = dataSource.getRepository(User);
+            const users = await userRepo.find();
+            expect(users[0].email).toBe('nil@1,com');
+        });
+    });
 });
