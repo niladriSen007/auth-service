@@ -1,3 +1,4 @@
+import { RefreshToken } from './../../src/entity/RefreshToken';
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 import request from 'supertest';
 import { DataSource } from 'typeorm';
@@ -6,6 +7,7 @@ import { AppDataSource } from '../../src/config/data-source';
 import { User } from '../../src/entity/User';
 import { Roles } from '../../src/entity/enum/Roles';
 import { isJwt } from '../utils';
+import { logger } from '../../src/config/logger';
 
 describe('POST /auth/register', () => {
     let dataSource: DataSource;
@@ -234,6 +236,42 @@ describe('POST /auth/register', () => {
             /*  console.log(accessToken) */
             expect(isJwt(accessToken)).toBeTruthy();
             expect(isJwt(refreshToken)).toBeTruthy();
+        });
+
+        it('Should store the refresh token into the database', async () => {
+            //AAA
+            //Arrange
+            const userData = {
+                firstName: 'Niladri',
+                lastName: 'Sen',
+                email: 'nil@1.com',
+                password: '1',
+            };
+
+            //Act
+            const response = await request(app)
+                .post('/auth/register')
+                .send(userData);
+
+            //Assert
+            const refreshTokenRepo = dataSource.getRepository(RefreshToken);
+            const refreshTokens = await refreshTokenRepo.find();
+
+            expect(refreshTokens).not.toBeNull();
+            expect(refreshTokens).toHaveLength(1);
+
+            logger.info('response', response.body);
+
+            /*  const refreshTokens = await refreshTokenRepo
+                .createQueryBuilder('refreshToken')
+                .where('refreshToken.userId = :userId', {
+                    userId: (response.body as Record<string, string>).id,
+                })
+                .getMany();
+
+            logger.info('refer', refreshTokens);
+            expect(refreshTokens).not.toBeNull();
+            expect(refreshTokens).toHaveLength(1); */
         });
     });
 
