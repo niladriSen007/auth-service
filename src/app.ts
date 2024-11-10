@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import 'reflect-metadata';
 import express, { NextFunction, Request, Response } from 'express';
 import { HttpError } from 'http-errors';

@@ -25,7 +25,6 @@ export const isJwt = (token: string | null): boolean => {
             }
         });
         return true;
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error: unknown) {
         return false;
     }

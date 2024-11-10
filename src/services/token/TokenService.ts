@@ -17,7 +17,6 @@ export class TokenService {
             privateKey = fs.readFileSync(
                 path.join(__dirname, '../../../certs/private.pem'),
             );
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (err) {
             const error = createHttpError(500, 'Error reading private key');
             throw error;
