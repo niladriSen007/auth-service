@@ -1,13 +1,13 @@
-import { RefreshToken } from './../../src/entity/RefreshToken';
+import { RefreshToken } from '../../src/entity/RefreshToken';
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 import request from 'supertest';
 import { DataSource } from 'typeorm';
 import app from '../../src/app';
 import { AppDataSource } from '../../src/config/data-source';
+import { logger } from '../../src/config/logger';
 import { User } from '../../src/entity/User';
 import { Roles } from '../../src/entity/enum/Roles';
 import { isJwt } from '../utils';
-import { logger } from '../../src/config/logger';
 
 describe('POST /auth/register', () => {
     let dataSource: DataSource;
@@ -33,7 +33,7 @@ describe('POST /auth/register', () => {
             const userData = {
                 firstName: 'Niladri',
                 lastName: 'Sen',
-                email: 'niladri@gmail.com',
+                email: 'nil@1.com',
                 password: '1',
             };
             //Act
@@ -95,7 +95,7 @@ describe('POST /auth/register', () => {
                 password: '1',
             };
             //Act
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+             
             const response = await request(app)
                 .post('/auth/register')
                 .send(userData);
@@ -116,10 +116,7 @@ describe('POST /auth/register', () => {
                 password: '1',
             };
             //Act
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            const response = await request(app)
-                .post('/auth/register')
-                .send(userData);
+            await request(app).post('/auth/register').send(userData);
 
             //Assert
             const userRepo = dataSource.getRepository(User);
@@ -139,7 +136,7 @@ describe('POST /auth/register', () => {
                 password: '1',
             };
             //Act
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+             
             const response = await request(app)
                 .post('/auth/register')
                 .send(userData);

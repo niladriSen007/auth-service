@@ -8,6 +8,7 @@ import { logger } from '../../config/logger';
 import { HelperService } from '../../services/helper/HelperService';
 import registerValidator from '../../validators/register-validator';
 import { RefreshToken } from '../../entity/RefreshToken';
+import loginValidator from '../../validators/login-validator';
 
 const router = express.Router();
 const userRepository = AppDataSource.getRepository(User);
@@ -22,6 +23,14 @@ router.post(
     registerValidator,
     async (req: Request, res: Response, next: NextFunction) => {
         await authController.register(req, res, next);
+    },
+);
+
+router.post(
+    '/login',
+    loginValidator,
+    async (req: Request, res: Response, next: NextFunction) => {
+        await authController.login(req, res, next);
     },
 );
 
