@@ -142,6 +142,10 @@ export class AuthController {
                 maxAge: 1000 * 60 * 60 * 24 * 365,
             });
 
+            this.logger.info('User logged in successfully', {
+                id: currentUser.id,
+            });
+
             res.status(200).json({
                 user: {
                     ...currentUser,
