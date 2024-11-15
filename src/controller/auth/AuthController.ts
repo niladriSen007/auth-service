@@ -6,6 +6,7 @@ import { Logger } from 'winston';
 import { TokenService } from '../../services/token/TokenService';
 import { UserService } from '../../services/user/UserService';
 import {
+    AuthRequest,
     UserLoginData,
     UserLoginRequest,
     UserRegisterRequest,
@@ -153,6 +154,18 @@ export class AuthController {
                 },
                 message: 'User logged in successfully',
             });
+        } catch (error) {
+            next(error);
+            return;
+        }
+    }
+
+    async self(req: AuthRequest, res: Response, next: NextFunction) {
+        try {
+            const user = await this.userService.getUserById(
+                Number(req?.auth?.sub),
+            );
+            return res.status(200).json({ ...user, password: '*********' });
         } catch (error) {
             next(error);
             return;

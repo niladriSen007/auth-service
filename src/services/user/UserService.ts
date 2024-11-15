@@ -28,7 +28,6 @@ export class UserService {
                 email,
                 password: hashedPassword,
             });
-             
         } catch (err) {
             const error = createHttpError(
                 500,
@@ -53,5 +52,11 @@ export class UserService {
             throw error;
         }
         return user;
+    }
+
+    async getUserById(id: number) {
+        return await this.userRepository.findOne({
+            where: { id },
+        });
     }
 }

@@ -1,4 +1,5 @@
 import { Request } from 'express';
+import { Roles } from '../entity/enum/Roles';
 
 export interface UserData {
     firstName: string;
@@ -18,4 +19,11 @@ export interface UserRegisterRequest extends Request {
 
 export interface UserLoginRequest extends Request {
     body: UserLoginData;
+}
+
+export interface AuthRequest extends Request {
+    auth: {
+        sub: string;
+        roles: Roles[];
+    };
 }
