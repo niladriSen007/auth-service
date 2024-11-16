@@ -95,7 +95,7 @@ describe('POST /auth/register', () => {
                 password: '1',
             };
             //Act
-             
+
             const response = await request(app)
                 .post('/auth/register')
                 .send(userData);
@@ -136,7 +136,7 @@ describe('POST /auth/register', () => {
                 password: '1',
             };
             //Act
-             
+
             const response = await request(app)
                 .post('/auth/register')
                 .send(userData);

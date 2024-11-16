@@ -8,10 +8,12 @@ export default expressjwt({
         jwksUri: Config.JWKS_URI!,
         cache: true,
         rateLimit: true,
-        jwksRequestsPerMinute: 5,
     }) as GetVerificationKey,
     algorithms: ['RS256'],
     getToken(req: Request) {
+        console.log(req?.rawHeaders[3].split(';'));
+        const tokensArray = req?.rawHeaders[3].split(';');
+
         const authHeader = req?.headers?.authorization;
         if (authHeader && authHeader.split(' ')[1] !== 'undefined') {
             if (authHeader.split(' ')[1]) return authHeader.split(' ')[1];
@@ -21,7 +23,7 @@ export default expressjwt({
             accessToken: string;
         }
 
-        const { accessToken } = req?.cookies as Cookies;
+        const accessToken = tokensArray[1].split('=')[1];
         return accessToken;
     },
 });
