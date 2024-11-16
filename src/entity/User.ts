@@ -1,5 +1,6 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Roles } from './enum/Roles';
+import { Tenant } from './Tenant';
 
 @Entity({ name: 'users' })
 export class User {
@@ -15,4 +16,6 @@ export class User {
     password: string;
     @Column({ type: 'enum', enum: Roles, default: [Roles.CUSTOMER] })
     roles: Roles[];
+    @ManyToOne(() => Tenant)
+    tenant: Tenant;
 }
