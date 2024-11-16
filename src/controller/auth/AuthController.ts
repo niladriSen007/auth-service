@@ -1,20 +1,18 @@
-import { NextFunction, Request, Response } from 'express';
+import { NextFunction, Response } from 'express';
 import { validationResult } from 'express-validator';
 
+import createHttpError from 'http-errors';
 import { JwtPayload } from 'jsonwebtoken';
 import { Logger } from 'winston';
+import { User } from '../../entity/User';
 import { TokenService } from '../../services/token/TokenService';
 import { UserService } from '../../services/user/UserService';
 import {
     AuthRequest,
-    RefreshTokenTypes,
-    UserLoginData,
     UserLoginRequest,
     UserRegisterRequest,
 } from '../../types';
-import { create } from 'domain';
-import createHttpError from 'http-errors';
-import { User } from '../../entity/User';
+import { AppDataSource } from '../../config/data-source';
 import { RefreshToken } from '../../entity/RefreshToken';
 
 export class AuthController {
@@ -258,5 +256,38 @@ export class AuthController {
             domain: 'localhost',
             maxAge: 1000 * 60 * 60 * 24 * 365,
         });
+    }
+
+    async logout(req: AuthRequest, res: Response, next: NextFunction) {
+        console.log(req.auth);
+        try {
+            await this.tokenService.deletePreviousRefreshTokens(
+                Number(req?.auth?.id),
+            );
+            this.logger.info('Token has been deleted successfully', {
+                id: req.auth.id,
+            });
+            this.logger.info('User logged out successfully', {
+                id: req.auth.sub,
+            });
+
+            res.clearCookie('accessToken', {
+                domain: 'localhost',
+                sameSite: 'strict',
+                httpOnly: true,
+            });
+
+            res.clearCookie('refreshToken', {
+                domain: 'localhost',
+                sameSite: 'strict',
+                httpOnly: true,
+            });
+
+            res.status(200).json({ message: 'User logged out successfully' });
+        } catch (error) {
+            next(error);
+            return;
+        }
+        return true;
     }
 }

@@ -1,4 +1,3 @@
-import { RefreshToken } from './../entity/RefreshToken';
 import { Request } from 'express';
 import { Roles } from '../entity/enum/Roles';
 import { User } from '../entity/User';
