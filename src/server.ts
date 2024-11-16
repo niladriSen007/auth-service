@@ -1,12 +1,8 @@
 import { Config } from './config';
 import app from './app';
-import express from 'express';
-import cookieParser from 'cookie-parser';
+
 import { logger } from './config/logger';
 import { AppDataSource } from './config/data-source';
-
-app.use(express.json());
-app.use(cookieParser());
 
 const startServer = async () => {
     try {

@@ -1,5 +1,7 @@
+import { RefreshToken } from './../entity/RefreshToken';
 import { Request } from 'express';
 import { Roles } from '../entity/enum/Roles';
+import { User } from '../entity/User';
 
 export interface UserData {
     firstName: string;
@@ -24,6 +26,23 @@ export interface UserLoginRequest extends Request {
 export interface AuthRequest extends Request {
     auth: {
         sub: string;
-        roles: Roles[];
+        roles?: Roles[];
+        email?: string;
+        id?: number;
     };
+}
+
+export interface Cookie {
+    accessToken: string;
+    refreshToken: string;
+}
+
+export interface RefreshTokenPayload {
+    id: string;
+}
+
+export interface RefreshTokenTypes {
+    user: User;
+    expiresAt: Date;
+    id?: number;
 }

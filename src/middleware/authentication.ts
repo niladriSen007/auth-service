@@ -2,6 +2,7 @@ import { expressjwt, GetVerificationKey } from 'express-jwt';
 import { Request } from 'express';
 import jwksClient from 'jwks-rsa';
 import { Config } from '../config';
+import { Cookie } from '../types';
 
 export default expressjwt({
     secret: jwksClient.expressJwtSecret({
@@ -11,19 +12,14 @@ export default expressjwt({
     }) as GetVerificationKey,
     algorithms: ['RS256'],
     getToken(req: Request) {
-        console.log(req?.rawHeaders[3].split(';'));
-        const tokensArray = req?.rawHeaders[3].split(';');
-
+        /*         console.log(req?.cookies);
+         */
         const authHeader = req?.headers?.authorization;
         if (authHeader && authHeader.split(' ')[1] !== 'undefined') {
             if (authHeader.split(' ')[1]) return authHeader.split(' ')[1];
         }
 
-        interface Cookies {
-            accessToken: string;
-        }
-
-        const accessToken = tokensArray[1].split('=')[1];
+        const { accessToken } = req?.cookies as Cookie;
         return accessToken;
     },
 });

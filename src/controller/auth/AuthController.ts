@@ -1,4 +1,4 @@
-import { NextFunction, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { validationResult } from 'express-validator';
 
 import { JwtPayload } from 'jsonwebtoken';
@@ -7,10 +7,15 @@ import { TokenService } from '../../services/token/TokenService';
 import { UserService } from '../../services/user/UserService';
 import {
     AuthRequest,
+    RefreshTokenTypes,
     UserLoginData,
     UserLoginRequest,
     UserRegisterRequest,
 } from '../../types';
+import { create } from 'domain';
+import createHttpError from 'http-errors';
+import { User } from '../../entity/User';
+import { RefreshToken } from '../../entity/RefreshToken';
 
 export class AuthController {
     constructor(
@@ -122,26 +127,11 @@ export class AuthController {
             const newRefreshToken =
                 await this.tokenService.persistRefreshToken(currentUser);
 
-            const accessToken = this.tokenService.generateAccessToken(payload);
-
-            const refreshToken = this.tokenService.generateRefreshToken({
-                ...payload,
-                id: String(newRefreshToken.id),
-            });
-
-            res.cookie('accessToken', accessToken, {
-                domain: 'localhost',
-                sameSite: 'strict',
-                httpOnly: true,
-                maxAge: 1000 * 60 * 60,
-            });
-
-            res.cookie('refreshToken', refreshToken, {
-                httpOnly: true,
-                sameSite: 'strict',
-                domain: 'localhost',
-                maxAge: 1000 * 60 * 60 * 24 * 365,
-            });
+            this.createAndStoreTokens(
+                payload,
+                { ...newRefreshToken, id: String(newRefreshToken.id) },
+                res,
+            );
 
             this.logger.info('User logged in successfully', {
                 id: currentUser.id,
@@ -170,5 +160,103 @@ export class AuthController {
             next(error);
             return;
         }
+    }
+
+    async refresh(req: AuthRequest, res: Response, next: NextFunction) {
+        try {
+            const payload: JwtPayload = {
+                sub: req.auth.sub,
+                email: req.auth.email,
+            };
+
+            const currentUser = await this.userService.getUserById(
+                Number(payload.sub),
+            );
+
+            if (!currentUser) {
+                const error = createHttpError(
+                    404,
+                    'User with the token not found',
+                );
+                next(error);
+                return;
+            }
+
+            const newRefreshToken =
+                await this.tokenService.persistRefreshToken(currentUser);
+
+            //delete old refresh token
+            await this.tokenService.deletePreviousRefreshTokens(
+                Number(req?.auth?.id),
+            );
+
+            this.createAndStoreTokens(
+                payload,
+                { ...newRefreshToken, id: String(newRefreshToken.id) },
+                res,
+            );
+
+            /* const accessToken = this.tokenService.generateAccessToken(payload);
+
+            const refreshToken = this.tokenService.generateRefreshToken({
+                ...payload,
+                id: String(newRefreshToken.id),
+            });
+
+            res.cookie('accessToken', accessToken, {
+                domain: 'localhost',
+                sameSite: 'strict',
+                httpOnly: true,
+                maxAge: 1000 * 60 * 60,
+            });
+
+            res.cookie('refreshToken', refreshToken, {
+                httpOnly: true,
+                sameSite: 'strict',
+                domain: 'localhost',
+                maxAge: 1000 * 60 * 60 * 24 * 365,
+            }); */
+            res.status(200).json({
+                user: {
+                    ...currentUser,
+                    password: '********',
+                },
+                message: 'User refresh token created successfully',
+            });
+        } catch (error) {
+            next(error);
+            return;
+        }
+    }
+
+    createAndStoreTokens(
+        payload: JwtPayload,
+        newRefreshToken: {
+            user: User;
+            expiresAt: Date;
+            id?: string;
+        },
+        res: Response,
+    ) {
+        const accessToken = this.tokenService.generateAccessToken(payload);
+
+        const refreshToken = this.tokenService.generateRefreshToken({
+            ...payload,
+            id: String(newRefreshToken.id),
+        });
+
+        res.cookie('accessToken', accessToken, {
+            domain: 'localhost',
+            sameSite: 'strict',
+            httpOnly: true,
+            maxAge: 1000 * 60 * 60,
+        });
+
+        res.cookie('refreshToken', refreshToken, {
+            httpOnly: true,
+            sameSite: 'strict',
+            domain: 'localhost',
+            maxAge: 1000 * 60 * 60 * 24 * 365,
+        });
     }
 }
