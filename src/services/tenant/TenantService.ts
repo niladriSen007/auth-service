@@ -32,4 +32,79 @@ export class TenantService {
             );
         }
     }
+
+    async getTenants() {
+        try {
+            this.logger.info('Getting tenants');
+            return await this.tenantRepository.find();
+        } catch (error) {
+            throw createHttpError(
+                500,
+                'Failed to fetch the data from the database',
+            );
+        }
+    }
+
+    async getTenant(id: number) {
+        try {
+            this.logger.info('Getting tenant');
+            const tenant = await this.tenantRepository.findOne({
+                where: { id },
+            });
+
+            if (!tenant) {
+                throw createHttpError(404, 'Tenant not found');
+            }
+
+            return tenant;
+        } catch (error) {
+            throw createHttpError(
+                500,
+                'Failed to fetch the data from the database',
+            );
+        }
+    }
+
+    async updateTenant(id: number, { name, address }: TenantData) {
+        try {
+            this.logger.info('Updating tenant');
+            const tenant = await this.tenantRepository.findOne({
+                where: { id },
+            });
+
+            if (!tenant) {
+                throw createHttpError(404, 'Tenant not found');
+            }
+
+            return await this.tenantRepository.update(id, {
+                name,
+                address,
+            });
+        } catch (error) {
+            throw createHttpError(
+                500,
+                'Failed to store the data in the database',
+            );
+        }
+    }
+
+    async deleteTenant(id: number) {
+        try {
+            this.logger.info('Deleting tenant');
+            const tenant = await this.tenantRepository.findOne({
+                where: { id },
+            });
+
+            if (!tenant) {
+                throw createHttpError(404, 'Tenant not found');
+            }
+
+            return await this.tenantRepository.delete(id);
+        } catch (error) {
+            throw createHttpError(
+                500,
+                'Failed to delete the data from the database',
+            );
+        }
+    }
 }

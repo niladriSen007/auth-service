@@ -46,4 +46,35 @@ router.post(
     },
 );
 
+router.get('/', async (req: Request, res: Response, next: NextFunction) => {
+    await tenantController.getTenants(req, res, next);
+});
+
+router.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
+    await tenantController.getTenant(req, res, next);
+});
+
+router.patch(
+    '/:id',
+    authentication as RequestHandler,
+    isValidRoleMiddleware([Roles.ADMIN]) as RequestHandler,
+    tenantRegisterValidator,
+    async (req: Request, res: Response, next: NextFunction) => {
+        await tenantController.updateTenant(
+            req as TenantRegisterRequest,
+            res,
+            next,
+        );
+    },
+);
+
+router.delete(
+    '/:id',
+    authentication as RequestHandler,
+    isValidRoleMiddleware([Roles.ADMIN]) as RequestHandler,
+    async (req: Request, res: Response, next: NextFunction) => {
+        await tenantController.deleteTenant(req, res, next);
+    },
+);
+
 export default router;
