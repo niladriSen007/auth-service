@@ -9,7 +9,13 @@ export class UserService {
         private readonly userRepository: Repository<User>,
         private readonly helperService: HelperService,
     ) {}
-    async registerUser({ firstName, lastName, email, password }: UserData) {
+    async registerUser({
+        firstName,
+        lastName,
+        email,
+        password,
+        role,
+    }: UserData) {
         //const existingUser = await this.userRepository.findOneBy({ email });
         //or
         const existingUser = await this.userRepository.findOne({
@@ -26,12 +32,15 @@ export class UserService {
                 firstName,
                 lastName,
                 email,
+                roles: [role!],
                 password: hashedPassword,
             });
-        } catch (err) {
+        } catch (err: unknown) {
+            const errorMessage =
+                err instanceof Error ? err.message : 'Unknown error';
             const error = createHttpError(
                 500,
-                'Failed to store the data in the database',
+                `Failed to store the data in the database - ${errorMessage}`,
             );
             throw error;
         }
@@ -58,5 +67,34 @@ export class UserService {
         return await this.userRepository.findOne({
             where: { id },
         });
+    }
+
+    async getUsers() {
+        return await this.userRepository.find();
+    }
+
+    async updateUser(id: number, data: UserData) {
+        const user = await this.userRepository.findOne({
+            where: { id },
+        });
+        if (!user) {
+            const error = createHttpError(400, 'User not found');
+            throw error;
+        }
+        await this.userRepository.update(id, data);
+        return await this.userRepository.findOne({
+            where: { id },
+        });
+    }
+
+    async deleteUser(id: number) {
+        const user = await this.userRepository.findOne({
+            where: { id },
+        });
+        if (!user) {
+            const error = createHttpError(400, 'User not found');
+            throw error;
+        }
+        await this.userRepository.delete(id);
     }
 }

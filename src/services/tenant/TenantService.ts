@@ -27,7 +27,7 @@ export class TenantService {
             });
         } catch (error) {
             throw createHttpError(
-                500,
+                403,
                 'Failed to store the data in the database',
             );
         }
@@ -39,7 +39,7 @@ export class TenantService {
             return await this.tenantRepository.find();
         } catch (error) {
             throw createHttpError(
-                500,
+                403,
                 'Failed to fetch the data from the database',
             );
         }
@@ -59,7 +59,7 @@ export class TenantService {
             return tenant;
         } catch (error) {
             throw createHttpError(
-                500,
+                403,
                 'Failed to fetch the data from the database',
             );
         }
@@ -82,7 +82,7 @@ export class TenantService {
             });
         } catch (error) {
             throw createHttpError(
-                500,
+                403,
                 'Failed to store the data in the database',
             );
         }
@@ -102,7 +102,7 @@ export class TenantService {
             return await this.tenantRepository.delete(id);
         } catch (error) {
             throw createHttpError(
-                500,
+                403,
                 'Failed to delete the data from the database',
             );
         }

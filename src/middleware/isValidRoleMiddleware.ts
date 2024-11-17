@@ -12,7 +12,7 @@ export const isValidRoleMiddleware = (roles: string[] = []) => {
             });
         }
         if (roles?.some((role) => role.includes(currentUserRoles[0]))) {
-            return next();
+            next();
         } else {
             next(
                 createHttpError(

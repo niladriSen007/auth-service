@@ -59,6 +59,7 @@ describe('Tenants tests', () => {
 
         const adminToken = jwks.token({
             sub: '1',
+            email: 'n@1.com',
             roles: [Roles.ADMIN],
         });
 
@@ -99,6 +100,7 @@ describe('Tenants tests', () => {
 
         const userToken = jwks.token({
             sub: '1',
+            email: 'n@1.com',
             roles: [Roles.CUSTOMER],
         });
 
