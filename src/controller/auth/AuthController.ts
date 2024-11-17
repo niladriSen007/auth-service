@@ -51,6 +51,7 @@ export class AuthController {
             const payload: JwtPayload = {
                 sub: String(user.id),
                 email: user.email,
+                roles: user.roles,
             };
 
             const newRefreshToken =
@@ -117,6 +118,7 @@ export class AuthController {
             const payload: JwtPayload = {
                 sub: String(currentUser.id),
                 email: currentUser.email,
+                roles: currentUser.roles,
             };
 
             const newRefreshToken =
@@ -162,6 +164,7 @@ export class AuthController {
             const payload: JwtPayload = {
                 sub: req.auth.sub,
                 email: req.auth.email,
+                roles: req.auth.roles,
             };
 
             const currentUser = await this.userService.getUserById(

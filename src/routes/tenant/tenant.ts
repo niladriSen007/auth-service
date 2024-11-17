@@ -1,4 +1,9 @@
-import express, { NextFunction, Request, Response } from 'express';
+import express, {
+    NextFunction,
+    Request,
+    RequestHandler,
+    Response,
+} from 'express';
 import { AppDataSource } from '../../config/data-source';
 import { logger } from '../../config/logger';
 import { AuthController } from '../../controller/auth/AuthController';
@@ -12,6 +17,9 @@ import { TenantService } from '../../services/tenant/TenantService';
 import { Tenant } from '../../entity/Tenant';
 import tenantRegisterValidator from '../../validators/tenant-register-validator';
 import { TenantRegisterRequest } from '../../types';
+import authentication from '../../middleware/authentication';
+import { isValidRoleMiddleware } from '../../middleware/isValidRoleMiddleware';
+import { Roles } from '../../entity/enum/Roles';
 
 const router = express.Router();
 const userRepository = AppDataSource.getRepository(User);
@@ -26,6 +34,8 @@ const tenantController = new TenantController(logger, tenantService);
 
 router.post(
     '/',
+    authentication as RequestHandler,
+    isValidRoleMiddleware([Roles.ADMIN]) as RequestHandler,
     tenantRegisterValidator,
     async (req: Request, res: Response, next: NextFunction) => {
         await tenantController.registerTenant(

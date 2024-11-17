@@ -1,9 +1,8 @@
+import { NextFunction, Response } from 'express';
+import { validationResult } from 'express-validator';
 import { Logger } from 'winston';
-import { logger } from './../../config/logger';
-import { NextFunction, Request, Response } from 'express';
 import { TenantService } from '../../services/tenant/TenantService';
 import { TenantRegisterRequest } from '../../types';
-import { validationResult } from 'express-validator';
 
 export class TenantController {
     constructor(
