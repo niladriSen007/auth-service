@@ -71,9 +71,7 @@ describe('GET /auth/self', () => {
                 .send();
 
             //check if user id matches with registered user id
-            expect((response.body as Record<string, string>).id).toBe(
-                newUser.id,
-            );
+            expect((response.body as Record<string, string>).id).toBe(newUser);
         });
     });
 });

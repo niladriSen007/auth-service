@@ -45,3 +45,13 @@ export interface RefreshTokenTypes {
     expiresAt: Date;
     id?: number;
 }
+
+export interface TenantRegisterRequest extends Request {
+    name: string;
+    address: string;
+}
+
+export interface TenantData {
+    name: string;
+    address: string;
+}

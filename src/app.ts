@@ -3,6 +3,7 @@ import express, { NextFunction, Request, Response } from 'express';
 import { HttpError } from 'http-errors';
 import { logger } from './config/logger';
 import authRouter from './routes/auth/auth';
+import tenantRouter from './routes/tenant/tenant';
 import cookieParser from 'cookie-parser';
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const app: any = express();
@@ -13,6 +14,7 @@ app.use(express.json());
 
 //Routes
 app.use('/auth', authRouter);
+app.use('/tenants', tenantRouter);
 
 //Global error handler
 app.use((err: HttpError, req: Request, res: Response, next: NextFunction) => {

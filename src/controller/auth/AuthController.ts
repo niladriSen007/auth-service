@@ -12,8 +12,6 @@ import {
     UserLoginRequest,
     UserRegisterRequest,
 } from '../../types';
-import { AppDataSource } from '../../config/data-source';
-import { RefreshToken } from '../../entity/RefreshToken';
 
 export class AuthController {
     constructor(
@@ -33,15 +31,14 @@ export class AuthController {
             });
             return res.status(400).json({ errors: result.array() });
         }
-        const { firstName, lastName, email } = req.body;
-        this.logger.debug('New request to register a user', {
-            firstName,
-            lastName,
-            email,
-            password: '********',
-        });
         try {
             const { firstName, lastName, email, password } = req.body;
+            this.logger.debug('New request to register a user', {
+                firstName,
+                lastName,
+                email,
+                password: '********',
+            });
 
             const user = await this.userService.registerUser({
                 firstName,
