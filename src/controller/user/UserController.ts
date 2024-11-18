@@ -1,7 +1,7 @@
 import { Logger } from 'winston';
 import { UserService } from '../../services/user/UserService';
 import { NextFunction, Request, Response } from 'express';
-import { UserRegisterRequest } from '../../types';
+import { UpdateUserData, UserRegisterRequest } from '../../types';
 import { validationResult } from 'express-validator';
 import { Roles } from '../../entity/enum/Roles';
 
@@ -25,7 +25,7 @@ export class UserController {
             return res.status(400).json({ errors: result.array() });
         }
         try {
-            const { firstName, lastName, email, password } = req.body;
+            const { firstName, lastName, email, password, tenantId } = req.body;
             this.logger.debug('New request to register a user', {
                 firstName,
                 lastName,
@@ -38,6 +38,7 @@ export class UserController {
                 lastName,
                 email,
                 password,
+                tenantId,
                 role: Roles.MANAGER,
             });
             this.logger.info('Manager registered successfully');
@@ -76,11 +77,7 @@ export class UserController {
         }
     }
 
-    async updateUser(
-        req: UserRegisterRequest,
-        res: Response,
-        next: NextFunction,
-    ) {
+    async updateUser(req: UpdateUserData, res: Response, next: NextFunction) {
         this.logger.info('Updating user');
         const result = validationResult(req);
         if (!result.isEmpty()) {
@@ -90,7 +87,7 @@ export class UserController {
             return res.status(400).json({ errors: result.array() });
         }
         try {
-            const { firstName, lastName, email, password } = req.body;
+            const { firstName, lastName, email } = req.body;
             const id = req.params.id;
             this.logger.debug('New request to update a user', {
                 id,
@@ -104,8 +101,7 @@ export class UserController {
                 firstName,
                 lastName,
                 email,
-                password,
-            });
+            } as UpdateUserData);
             this.logger.info('User updated successfully');
             res.status(200).json({
                 user: {

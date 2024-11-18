@@ -11,7 +11,8 @@
         "lint:fix": "eslint . --fix",
         "prepare": "husky",
         "start": "ts-node src/index.ts",
-        "typeorm": "typeorm-ts-node-commonjs -d src/config/data-source.ts"
+        "typeorm": "typeorm-ts-node-commonjs -d src/config/data-source.ts",
+        "typeorm:create": "typeorm-ts-node-commonjs "
     },
     "keywords": [],
     "author": "",

@@ -1,7 +1,7 @@
 import createHttpError from 'http-errors';
 import { Repository } from 'typeorm';
 import { User } from '../../entity/User';
-import { UserData, UserLoginData } from '../../types';
+import { UpdateUserData, UserData, UserLoginData } from '../../types';
 import { HelperService } from '../helper/HelperService';
 
 export class UserService {
@@ -14,6 +14,7 @@ export class UserService {
         lastName,
         email,
         password,
+        tenantId,
         role,
     }: UserData) {
         //const existingUser = await this.userRepository.findOneBy({ email });
@@ -28,6 +29,16 @@ export class UserService {
         const hashedPassword = await this.helperService.hashPassword(password);
 
         try {
+            if (tenantId) {
+                return await this.userRepository.save({
+                    firstName,
+                    lastName,
+                    email,
+                    roles: [role!],
+                    password: hashedPassword,
+                    tenant: tenantId ? { id: tenantId } : undefined,
+                });
+            }
             return await this.userRepository.save({
                 firstName,
                 lastName,
@@ -66,6 +77,7 @@ export class UserService {
     async getUserById(id: number) {
         return await this.userRepository.findOne({
             where: { id },
+            select: ['id', 'firstName', 'lastName', 'email', 'roles'],
         });
     }
 
@@ -73,7 +85,7 @@ export class UserService {
         return await this.userRepository.find();
     }
 
-    async updateUser(id: number, data: UserData) {
+    async updateUser(id: number, data: UpdateUserData) {
         const user = await this.userRepository.findOne({
             where: { id },
         });

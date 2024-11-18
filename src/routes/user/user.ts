@@ -14,6 +14,8 @@ import { isValidRoleMiddleware } from '../../middleware/isValidRoleMiddleware';
 import { HelperService } from '../../services/helper/HelperService';
 import { UserService } from './../../services/user/UserService';
 import registerValidator from '../../validators/register-validator';
+import { UpdateUserData } from '../../types';
+import updateUserValidator from '../../validators/update-user-validator';
 const router = express.Router();
 
 const helperService = new HelperService();
@@ -53,9 +55,9 @@ router.patch(
     '/:id',
     authentication as RequestHandler,
     isValidRoleMiddleware([Roles.ADMIN]) as RequestHandler,
-    registerValidator,
+    updateUserValidator,
     async (req: Request, res: Response, next: NextFunction) => {
-        await userController.updateUser(req, res, next);
+        await userController.updateUser(req as UpdateUserData, res, next);
     },
 );
 

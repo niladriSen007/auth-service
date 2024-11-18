@@ -8,6 +8,13 @@ export interface UserData {
     email: string;
     password: string;
     role?: Roles;
+    tenantId?: number;
+}
+
+export interface UpdateUserData extends Request {
+    firstName?: string;
+    lastName?: string;
+    email?: string;
 }
 
 export interface UserLoginData {
@@ -17,6 +24,12 @@ export interface UserLoginData {
 
 export interface UserRegisterRequest extends Request {
     body: UserData;
+}
+
+export interface ManagerRegisterRequest extends Request {
+    body: UserData & {
+        tenantId: number;
+    };
 }
 
 export interface UserLoginRequest extends Request {
