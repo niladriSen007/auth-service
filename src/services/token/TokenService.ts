@@ -12,11 +12,15 @@ export class TokenService {
     ) {}
 
     generateAccessToken(payload: JwtPayload) {
-        let privateKey: Buffer;
+        let privateKey: string;
+
+        if (!Config.PRIVATE_KEY) {
+            const error = createHttpError(500, 'Private key not found');
+            throw error;
+        }
+
         try {
-            privateKey = fs.readFileSync(
-                path.join(__dirname, '../../../certs/private.pem'),
-            );
+            privateKey = Config.PRIVATE_KEY;
         } catch (err) {
             const error = createHttpError(500, 'Error reading private key');
             throw error;
