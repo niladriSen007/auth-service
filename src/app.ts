@@ -6,9 +6,16 @@ import authRouter from './routes/auth/auth';
 import tenantRouter from './routes/tenant/tenant';
 import userRouter from './routes/user/user';
 import cookieParser from 'cookie-parser';
+import cors from 'cors';
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const app: any = express();
 
+app.use(
+    cors({
+        origin: ['http://localhost:5173'],
+        credentials: true,
+    }),
+);
 app.use(cookieParser());
 app.use(express.static('public'));
 app.use(express.json());
