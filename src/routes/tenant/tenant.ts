@@ -38,23 +38,31 @@ router.post(
     isValidRoleMiddleware([Roles.ADMIN]) as RequestHandler,
     tenantRegisterValidator,
     async (req: Request, res: Response, next: NextFunction) => {
-        await tenantController.registerTenant(
+        (await tenantController.registerTenant(
             req as TenantRegisterRequest,
             res,
             next,
-        );
+        )) as unknown as RequestHandler;
     },
 );
 
 router.get('/', async (req: Request, res: Response, next: NextFunction) => {
-    await tenantController.getTenants(req, res, next);
+    (await tenantController.getTenants(
+        req,
+        res,
+        next,
+    )) as unknown as RequestHandler;
 });
 
 router.get(
     '/:id',
     authentication as RequestHandler,
     async (req: Request, res: Response, next: NextFunction) => {
-        await tenantController.getTenant(req, res, next);
+        (await tenantController.getTenant(
+            req,
+            res,
+            next,
+        )) as unknown as RequestHandler;
     },
 );
 
@@ -64,11 +72,11 @@ router.patch(
     isValidRoleMiddleware([Roles.ADMIN]) as RequestHandler,
     tenantRegisterValidator,
     async (req: Request, res: Response, next: NextFunction) => {
-        await tenantController.updateTenant(
+        (await tenantController.updateTenant(
             req as TenantRegisterRequest,
             res,
             next,
-        );
+        )) as unknown as RequestHandler;
     },
 );
 
@@ -77,7 +85,11 @@ router.delete(
     authentication as RequestHandler,
     isValidRoleMiddleware([Roles.ADMIN]) as RequestHandler,
     async (req: Request, res: Response, next: NextFunction) => {
-        await tenantController.deleteTenant(req, res, next);
+        (await tenantController.deleteTenant(
+            req,
+            res,
+            next,
+        )) as unknown as RequestHandler;
     },
 );
 

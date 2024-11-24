@@ -29,7 +29,11 @@ router.post(
     isValidRoleMiddleware([Roles.ADMIN]) as RequestHandler,
     registerValidator,
     async (req: Request, res: Response, next: NextFunction) => {
-        await userController.createUsers(req, res, next);
+        (await userController.createUsers(
+            req,
+            res,
+            next,
+        )) as unknown as RequestHandler;
     },
 );
 
@@ -38,7 +42,11 @@ router.get(
     authentication as RequestHandler,
     isValidRoleMiddleware([Roles.ADMIN]) as RequestHandler,
     async (req: Request, res: Response, next: NextFunction) => {
-        await userController.getAllUsers(req, res, next);
+        (await userController.getAllUsers(
+            req,
+            res,
+            next,
+        )) as unknown as RequestHandler;
     },
 );
 
@@ -47,7 +55,11 @@ router.get(
     authentication as RequestHandler,
     isValidRoleMiddleware([Roles.ADMIN]) as RequestHandler,
     async (req: Request, res: Response, next: NextFunction) => {
-        await userController.getUserById(req, res, next);
+        (await userController.getUserById(
+            req,
+            res,
+            next,
+        )) as unknown as RequestHandler;
     },
 );
 
@@ -57,7 +69,11 @@ router.patch(
     isValidRoleMiddleware([Roles.ADMIN]) as RequestHandler,
     updateUserValidator,
     async (req: Request, res: Response, next: NextFunction) => {
-        await userController.updateUser(req as UpdateUserData, res, next);
+        (await userController.updateUser(
+            req as UpdateUserData,
+            res,
+            next,
+        )) as unknown as RequestHandler;
     },
 );
 
@@ -66,7 +82,11 @@ router.delete(
     authentication as RequestHandler,
     isValidRoleMiddleware([Roles.ADMIN]) as RequestHandler,
     async (req: Request, res: Response, next: NextFunction) => {
-        await userController.deleteUser(req, res, next);
+        (await userController.deleteUser(
+            req,
+            res,
+            next,
+        )) as unknown as RequestHandler;
     },
 );
 
