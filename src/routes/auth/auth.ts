@@ -31,7 +31,11 @@ router.post(
     '/register',
     registerValidator,
     async (req: Request, res: Response, next: NextFunction) => {
-        await authController.register(req, res, next);
+        (await authController.register(
+            req,
+            res,
+            next,
+        )) as unknown as RequestHandler;
     },
 );
 
@@ -39,7 +43,11 @@ router.post(
     '/login',
     loginValidator,
     async (req: Request, res: Response, next: NextFunction) => {
-        await authController.login(req, res, next);
+        (await authController.login(
+            req,
+            res,
+            next,
+        )) as unknown as RequestHandler;
     },
 );
 
@@ -47,7 +55,11 @@ router.get(
     '/self',
     authentication as RequestHandler,
     async (req: Request, res: Response, next: NextFunction) => {
-        await authController.self(req as AuthRequest, res, next);
+        (await authController.self(
+            req as AuthRequest,
+            res,
+            next,
+        )) as unknown as RequestHandler;
     },
 );
 
@@ -55,7 +67,11 @@ router.post(
     '/refresh',
     validateRefreshTokens as RequestHandler,
     async (req: Request, res: Response, next: NextFunction) => {
-        await authController.refresh(req as AuthRequest, res, next);
+        (await authController.refresh(
+            req as AuthRequest,
+            res,
+            next,
+        )) as unknown as RequestHandler;
     },
 );
 
@@ -64,7 +80,11 @@ router.post(
     authentication as RequestHandler,
     parseRefreshToken as RequestHandler,
     async (req: Request, res: Response, next: NextFunction) => {
-        await authController.logout(req as AuthRequest, res, next);
+        (await authController.logout(
+            req as AuthRequest,
+            res,
+            next,
+        )) as unknown as RequestHandler;
     },
 );
 
