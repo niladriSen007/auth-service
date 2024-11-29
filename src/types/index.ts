@@ -69,3 +69,8 @@ export interface TenantData {
     name: string;
     address: string;
 }
+
+export interface PaginationQueryPrams {
+    currentPage: number;
+    limit: number;
+}
