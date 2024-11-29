@@ -2,9 +2,11 @@ import {
     Column,
     CreateDateColumn,
     Entity,
+    OneToMany,
     PrimaryGeneratedColumn,
     UpdateDateColumn,
 } from 'typeorm';
+import { User } from './User';
 
 @Entity({ name: 'tenants' })
 export class Tenant {
@@ -16,6 +18,9 @@ export class Tenant {
 
     @Column('varchar', { length: 255 })
     address: string;
+
+    @OneToMany(() => User, (user) => user.tenant)
+    users: User[];
 
     @UpdateDateColumn()
     updatedAt: Date;

@@ -36,8 +36,11 @@ export class TenantService {
     async getTenants() {
         try {
             this.logger.info('Getting tenants');
-            return await this.tenantRepository.find();
+            return await this.tenantRepository.find({
+                relations: ['users'],
+            });
         } catch (error) {
+            console.log(error);
             throw createHttpError(
                 403,
                 'Failed to fetch the data from the database',
