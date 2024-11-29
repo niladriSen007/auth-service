@@ -32,12 +32,13 @@ export class AuthController {
             return res.status(400).json({ errors: result.array() });
         }
         try {
-            const { firstName, lastName, email, password } = req.body;
-            this.logger.debug('New request to register a user', {
+            const { firstName, lastName, email, password, role } = req.body;
+            console.log('New request to register a user', {
                 firstName,
                 lastName,
                 email,
                 password: '********',
+                role,
             });
 
             const user = await this.userService.registerUser({
@@ -45,6 +46,7 @@ export class AuthController {
                 lastName,
                 email,
                 password,
+                role,
             });
             this.logger.info('User registered successfully');
 

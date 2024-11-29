@@ -7,7 +7,7 @@ export interface UserData {
     lastName: string;
     email: string;
     password: string;
-    role?: Roles;
+    role?: string;
     tenantId?: number;
 }
 

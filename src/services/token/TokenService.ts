@@ -1,7 +1,5 @@
-import fs from 'fs';
 import createHttpError from 'http-errors';
 import jwt, { JwtPayload } from 'jsonwebtoken';
-import path from 'path';
 import { Repository } from 'typeorm';
 import { Config } from '../../config';
 import { RefreshToken } from '../../entity/RefreshToken';

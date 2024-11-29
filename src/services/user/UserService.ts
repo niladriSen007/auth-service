@@ -3,6 +3,7 @@ import { Repository } from 'typeorm';
 import { User } from '../../entity/User';
 import { UpdateUserData, UserData, UserLoginData } from '../../types';
 import { HelperService } from '../helper/HelperService';
+import { Roles } from '../../entity/enum/Roles';
 
 export class UserService {
     constructor(
@@ -29,21 +30,31 @@ export class UserService {
         const hashedPassword = await this.helperService.hashPassword(password);
 
         try {
+            if (role === Roles.ADMIN) {
+                return await this.userRepository.save({
+                    firstName,
+                    lastName,
+                    email,
+                    roles: [Roles?.ADMIN],
+                    password: hashedPassword,
+                });
+            }
             if (tenantId) {
                 return await this.userRepository.save({
                     firstName,
                     lastName,
                     email,
-                    roles: [role!],
+                    roles: [Roles?.MANAGER],
                     password: hashedPassword,
                     tenant: tenantId ? { id: tenantId } : undefined,
                 });
             }
+            console.log('User created', role);
             return await this.userRepository.save({
                 firstName,
                 lastName,
                 email,
-                roles: [role!],
+                roles: [Roles?.CUSTOMER],
                 password: hashedPassword,
             });
         } catch (err: unknown) {
@@ -77,12 +88,28 @@ export class UserService {
     async getUserById(id: number) {
         return await this.userRepository.findOne({
             where: { id },
-            select: ['id', 'firstName', 'lastName', 'email', 'roles'],
+            select: ['id', 'firstName', 'lastName', 'email', 'roles', 'tenant'],
+            relations: {
+                tenant: true,
+            },
         });
     }
 
     async getUsers() {
-        return await this.userRepository.find();
+        return await this.userRepository.find({
+            select: [
+                'id',
+                'email',
+                'firstName',
+                'lastName',
+                'roles',
+                'tenant',
+                'createdAt',
+            ],
+            relations: {
+                tenant: true,
+            },
+        });
     }
 
     async updateUser(id: number, data: UpdateUserData) {
