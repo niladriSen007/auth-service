@@ -36,7 +36,9 @@ export class TenantService {
     async getTenants() {
         try {
             this.logger.info('Getting tenants');
-            return await this.tenantRepository.find();
+            return await this.tenantRepository.find({
+                relations: ['users'],
+            });
         } catch (error) {
             throw createHttpError(
                 403,
@@ -50,6 +52,9 @@ export class TenantService {
             this.logger.info('Getting tenant');
             const tenant = await this.tenantRepository.findOne({
                 where: { id },
+                relations: {
+                    users: true,
+                },
             });
 
             if (!tenant) {
