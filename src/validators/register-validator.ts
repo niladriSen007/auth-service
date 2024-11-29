@@ -53,4 +53,8 @@ export default checkSchema({
         notEmpty: true,
         trim: true,
     },
+    role: {
+        optional: true,
+        isString: true,
+    },
 });

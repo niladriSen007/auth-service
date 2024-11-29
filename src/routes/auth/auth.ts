@@ -15,7 +15,7 @@ import registerValidator from '../../validators/register-validator';
 import { RefreshToken } from '../../entity/RefreshToken';
 import loginValidator from '../../validators/login-validator';
 import authentication from '../../middleware/authentication';
-import { AuthRequest } from '../../types';
+import { AuthRequest, UserData, UserRegisterRequest } from '../../types';
 import validateRefreshTokens from '../../middleware/validateRefreshTokens';
 import parseRefreshToken from '../../middleware/parseRefreshToken';
 
@@ -32,7 +32,7 @@ router.post(
     registerValidator,
     async (req: Request, res: Response, next: NextFunction) => {
         (await authController.register(
-            req,
+            req as UserRegisterRequest,
             res,
             next,
         )) as unknown as RequestHandler;

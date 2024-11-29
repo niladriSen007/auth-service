@@ -1,4 +1,11 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+    Column,
+    CreateDateColumn,
+    Entity,
+    ManyToOne,
+    PrimaryGeneratedColumn,
+    UpdateDateColumn,
+} from 'typeorm';
 import { Roles } from './enum/Roles';
 import { Tenant } from './Tenant';
 
@@ -18,4 +25,10 @@ export class User {
     roles: Roles[];
     @ManyToOne(() => Tenant)
     tenant: Tenant;
+
+    @UpdateDateColumn()
+    updatedAt: Date;
+
+    @CreateDateColumn()
+    createdAt: Date;
 }
