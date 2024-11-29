@@ -1,7 +1,12 @@
 import createHttpError from 'http-errors';
 import { Repository } from 'typeorm';
 import { User } from '../../entity/User';
-import { UpdateUserData, UserData, UserLoginData } from '../../types';
+import {
+    PaginationQueryPrams,
+    UpdateUserData,
+    UserData,
+    UserLoginData,
+} from '../../types';
 import { HelperService } from '../helper/HelperService';
 import { Roles } from '../../entity/enum/Roles';
 
@@ -95,21 +100,19 @@ export class UserService {
         });
     }
 
-    async getUsers() {
-        return await this.userRepository.find({
-            select: [
-                'id',
-                'email',
-                'firstName',
-                'lastName',
-                'roles',
-                'tenant',
-                'createdAt',
-            ],
-            relations: {
-                tenant: true,
-            },
-        });
+    async getUsers(validatedQuery: PaginationQueryPrams) {
+        const queryBuilder = this.userRepository.createQueryBuilder();
+        const { limit, currentPage } = validatedQuery;
+        /*  const result = await queryBuilder.skip((currentPage - 1) * limit).take(limit).getManyAndCount();
+        queryBuilder.leftJoinAndSelect('user.tenant', 'tenant'); */
+        const result = await queryBuilder
+            .leftJoinAndSelect('User.tenant', 'tenant')
+            .skip((currentPage - 1) * limit)
+            .take(limit)
+            .getManyAndCount();
+
+        /* return { users, total }; */
+        return result;
     }
 
     async updateUser(id: number, data: UpdateUserData) {

@@ -1,8 +1,12 @@
 import { Logger } from 'winston';
 import { UserService } from '../../services/user/UserService';
 import { NextFunction, Request, Response } from 'express';
-import { UpdateUserData, UserRegisterRequest } from '../../types';
-import { validationResult } from 'express-validator';
+import {
+    PaginationQueryPrams,
+    UpdateUserData,
+    UserRegisterRequest,
+} from '../../types';
+import { matchedData, validationResult } from 'express-validator';
 import { Roles } from '../../entity/enum/Roles';
 
 export class UserController {
@@ -56,9 +60,23 @@ export class UserController {
 
     async getAllUsers(req: Request, res: Response, next: NextFunction) {
         this.logger.info('Getting users');
-        try {
-            const users = await this.userService.getUsers();
-            res.status(200).json({ users });
+        const validatedQuery = matchedData(req, {
+            onlyValidData: true,
+        });
+        /*         console.log(validatedQuery,"validatedQuery")
+         */ try {
+            const [users, count] = await this.userService.getUsers(
+                validatedQuery as PaginationQueryPrams,
+            );
+            res.status(200).json({
+                users,
+                count,
+                currentPage: validatedQuery.currentPage as number,
+                limit: validatedQuery.limit as number,
+                totalPageCount: Math.ceil(
+                    count / (validatedQuery.limit as number),
+                ),
+            });
         } catch (error) {
             next(error);
             return;

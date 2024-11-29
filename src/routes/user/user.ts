@@ -16,6 +16,7 @@ import { UserService } from './../../services/user/UserService';
 import registerValidator from '../../validators/register-validator';
 import { UpdateUserData } from '../../types';
 import updateUserValidator from '../../validators/update-user-validator';
+import listUsersValidator from '../../validators/list-users-validator';
 const router = express.Router();
 
 const helperService = new HelperService();
@@ -41,6 +42,7 @@ router.get(
     '/getAllUsers',
     authentication as RequestHandler,
     isValidRoleMiddleware([Roles.ADMIN]) as RequestHandler,
+    listUsersValidator,
     async (req: Request, res: Response, next: NextFunction) => {
         (await userController.getAllUsers(
             req,
