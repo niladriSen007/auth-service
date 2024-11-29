@@ -40,6 +40,7 @@ export class TenantService {
                 relations: ['users'],
             });
         } catch (error) {
+            console.log(error);
             throw createHttpError(
                 403,
                 'Failed to fetch the data from the database',
