@@ -69,7 +69,9 @@ export class TenantService {
             this.logger.info('Getting tenant');
             const tenant = await this.tenantRepository.findOne({
                 where: { id },
-                relations: ['users'],
+                relations: {
+                    users: true,
+                },
             });
 
             if (!tenant) {

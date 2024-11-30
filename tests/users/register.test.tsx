@@ -167,7 +167,7 @@ describe('POST /auth/register', () => {
             /* console.log(users[0].password); */
             expect(users[0].password).not.toBe(userData.password);
             expect(users[0].password).toHaveLength(60);
-            expect(users[0].password).toMatch(/^\$2b\$\d+\$/);
+            expect(users[0].password).toMatch(/^\$2[a|b]\$\d+\$/);
         });
 
         it("Should return status 400 if the user's email is already registered", async () => {

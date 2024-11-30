@@ -2,7 +2,7 @@
 import { DataSource } from 'typeorm';
 import { AppDataSource } from '../../src/config/data-source';
 import request from 'supertest';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import app from '../../src/app';
 import { User } from '../../src/entity/User';
 import { Roles } from '../../src/entity/enum/Roles';
