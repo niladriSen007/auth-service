@@ -73,4 +73,6 @@ export interface TenantData {
 export interface PaginationQueryPrams {
     currentPage: number;
     limit: number;
+    q: string;
+    role?: string;
 }

@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from 'express';
-import { validationResult } from 'express-validator';
+import { matchedData, validationResult } from 'express-validator';
 import { Logger } from 'winston';
 import { TenantService } from '../../services/tenant/TenantService';
-import { TenantRegisterRequest } from '../../types';
+import { PaginationQueryPrams, TenantRegisterRequest } from '../../types';
 
 export class TenantController {
     constructor(
@@ -47,9 +47,22 @@ export class TenantController {
 
     async getTenants(req: Request, res: Response, next: NextFunction) {
         this.logger.info('Getting tenants');
+        const validatedQuery = matchedData(req, {
+            onlyValidData: true,
+        });
         try {
-            const tenants = await this.tenantService.getTenants();
-            res.status(200).json({ tenants });
+            const [tenants, count] = await this.tenantService.getTenants(
+                validatedQuery as PaginationQueryPrams,
+            );
+            res.status(200).json({
+                tenants,
+                count,
+                currentPage: validatedQuery.currentPage as number,
+                limit: validatedQuery.limit as number,
+                totalPageCount: Math.ceil(
+                    count / (validatedQuery.limit as number),
+                ),
+            });
         } catch (error) {
             next(error);
             return;

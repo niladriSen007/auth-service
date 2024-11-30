@@ -2,7 +2,7 @@ import { Repository } from 'typeorm';
 import { Logger } from 'winston';
 import { Tenant } from '../../entity/Tenant';
 import createHttpError from 'http-errors';
-import { TenantData } from '../../types';
+import { PaginationQueryPrams, TenantData } from '../../types';
 
 export class TenantService {
     constructor(
@@ -33,12 +33,28 @@ export class TenantService {
         }
     }
 
-    async getTenants() {
+    async getTenants(validatedQuery: PaginationQueryPrams) {
+        const queryBuilder = this.tenantRepository.createQueryBuilder('tenant');
+        const { limit, currentPage, q } = validatedQuery;
         try {
             this.logger.info('Getting tenants');
-            return await this.tenantRepository.find({
-                relations: ['users'],
-            });
+            if (q) {
+                const searchTerm = `%${q}%`;
+                queryBuilder.where((qb) => {
+                    qb.where('tenant.name ILike :searchTerm', {
+                        searchTerm,
+                    }).orWhere('tenant.address ILike :searchTerm', {
+                        searchTerm,
+                    });
+                });
+            }
+            const result = await queryBuilder
+                .leftJoinAndSelect('tenant.users', 'users')
+                .skip((currentPage - 1) * limit)
+                .take(limit)
+                .orderBy('tenant.id', 'DESC')
+                .getManyAndCount();
+            return result;
         } catch (error) {
             console.log(error);
             throw createHttpError(
