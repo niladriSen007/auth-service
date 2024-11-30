@@ -1,5 +1,5 @@
 import createHttpError from 'http-errors';
-import { Repository } from 'typeorm';
+import { Brackets, Repository } from 'typeorm';
 import { User } from '../../entity/User';
 import {
     PaginationQueryPrams,
@@ -101,14 +101,34 @@ export class UserService {
     }
 
     async getUsers(validatedQuery: PaginationQueryPrams) {
-        const queryBuilder = this.userRepository.createQueryBuilder();
-        const { limit, currentPage } = validatedQuery;
-        /*  const result = await queryBuilder.skip((currentPage - 1) * limit).take(limit).getManyAndCount();
-        queryBuilder.leftJoinAndSelect('user.tenant', 'tenant'); */
+        const queryBuilder = this.userRepository.createQueryBuilder('user');
+        const { limit, currentPage, q, role } = validatedQuery;
+
+        if (q) {
+            const searchTerm = `%${q}%`;
+            /* queryBuilder.where(`user.firstName ILike :searchTerm`, { searchTerm })
+            .orWhere(`user.lastName ILike :searchTerm`, { searchTerm })
+            .orWhere(`user.email ILike :searchTerm`, { searchTerm }); */
+
+            queryBuilder.where(
+                new Brackets((qb) => {
+                    qb.where(
+                        "CONCAT(user.firstName, ' ', user.lastName) ILike :searchTerm",
+                        { searchTerm },
+                    ).orWhere('user.email ILike :searchTerm', { searchTerm });
+                }),
+            );
+        }
+
+        if (role) {
+            queryBuilder.andWhere(`user.roles = :role`, { role });
+        }
+
         const result = await queryBuilder
-            .leftJoinAndSelect('User.tenant', 'tenant')
+            .leftJoinAndSelect('user.tenant', 'tenant')
             .skip((currentPage - 1) * limit)
             .take(limit)
+            .orderBy('user.id', 'DESC')
             .getManyAndCount();
 
         /* return { users, total }; */

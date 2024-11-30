@@ -20,6 +20,7 @@ import { TenantRegisterRequest } from '../../types';
 import authentication from '../../middleware/authentication';
 import { isValidRoleMiddleware } from '../../middleware/isValidRoleMiddleware';
 import { Roles } from '../../entity/enum/Roles';
+import listTenantsValidator from '../../validators/list-tenants-validator';
 
 const router = express.Router();
 const userRepository = AppDataSource.getRepository(User);
@@ -46,13 +47,17 @@ router.post(
     },
 );
 
-router.get('/', async (req: Request, res: Response, next: NextFunction) => {
-    (await tenantController.getTenants(
-        req,
-        res,
-        next,
-    )) as unknown as RequestHandler;
-});
+router.get(
+    '/',
+    listTenantsValidator,
+    async (req: Request, res: Response, next: NextFunction) => {
+        (await tenantController.getTenants(
+            req,
+            res,
+            next,
+        )) as unknown as RequestHandler;
+    },
+);
 
 router.get(
     '/:id',
