@@ -12,15 +12,16 @@ import { RefreshToken } from '../../entity/RefreshToken';
 import { User } from '../../entity/User';
 import { HelperService } from '../../services/helper/HelperService';
 import { UserService } from '../../services/user/UserService';
-import { TokenService } from './../../services/token/TokenService';
+import { TokenService } from '../../services/token/TokenService';
 import { TenantService } from '../../services/tenant/TenantService';
 import { Tenant } from '../../entity/Tenant';
 import tenantRegisterValidator from '../../validators/tenant-register-validator';
 import { TenantRegisterRequest } from '../../types';
 import authentication from '../../middleware/authentication';
-import { isValidRoleMiddleware } from '../../middleware/isValidRoleMiddleware';
+
 import { Roles } from '../../entity/enum/Roles';
 import listTenantsValidator from '../../validators/list-tenants-validator';
+import { isValidRoleMiddleware } from '../../middleware/isValidRoleMiddleware';
 
 const router = express.Router();
 const userRepository = AppDataSource.getRepository(User);
