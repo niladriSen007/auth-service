@@ -9,11 +9,17 @@ import {
 } from '../../types';
 import { HelperService } from '../helper/HelperService';
 import { Roles } from '../../entity/enum/Roles';
+import { TenantService } from '../tenant/TenantService';
+import { Tenant } from '../../entity/Tenant';
+import { TokenService } from '../token/TokenService';
 
 export class UserService {
     constructor(
         private readonly userRepository: Repository<User>,
         private readonly helperService: HelperService,
+        private readonly tenantService: TenantService,
+        private readonly tenantRepository: Repository<Tenant>,
+        private readonly tokenService: TokenService,
     ) {}
     async registerUser({
         firstName,
@@ -169,14 +175,38 @@ export class UserService {
         });
     }
 
-    async deleteUser(id: number) {
+    async deleteUser(userId: number) {
         const user = await this.userRepository.findOne({
-            where: { id },
+            where: { id: userId },
         });
         if (!user) {
             const error = createHttpError(400, 'User not found');
             throw error;
         }
-        await this.userRepository.delete(id);
+        const userRelatedTenant = user?.tenant;
+        const refreshTokens = user?.refreshTokens;
+
+        if (refreshTokens) {
+            const demo = refreshTokens.map(async (token) => {
+                await this.tokenService.deletePreviousRefreshTokens(token.id);
+            });
+            if (demo) {
+                await Promise.all(demo);
+            }
+        }
+
+        if (userRelatedTenant) {
+            const tenant = await this.tenantService.getTenant(
+                userRelatedTenant.id,
+            );
+            if (tenant) {
+                tenant.users = tenant.users.filter(
+                    (manager) => manager.id !== userId,
+                );
+            }
+            await this.tenantRepository.save(tenant);
+        }
+
+        await this.userRepository.delete(userId);
     }
 }

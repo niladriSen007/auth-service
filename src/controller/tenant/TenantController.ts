@@ -3,6 +3,7 @@ import { matchedData, validationResult } from 'express-validator';
 import { Logger } from 'winston';
 import { TenantService } from '../../services/tenant/TenantService';
 import { PaginationQueryPrams, TenantRegisterRequest } from '../../types';
+import createHttpError from 'http-errors';
 
 export class TenantController {
     constructor(
@@ -22,7 +23,15 @@ export class TenantController {
             this.logger.error('Validation error', {
                 errors: result.array(),
             });
-            return res.status(400).json({ errors: result.array() });
+            return next(
+                createHttpError(
+                    400,
+                    'Validation error',
+                    result.array()?.at(0)?.msg as string,
+                ),
+            );
+            /*             return res.status(400).json({ errors: result.array() });
+             */
         }
         try {
             const { name, address } = req.body;
@@ -93,7 +102,15 @@ export class TenantController {
             this.logger.error('Validation error', {
                 errors: result.array(),
             });
-            return res.status(400).json({ errors: result.array() });
+            return next(
+                createHttpError(
+                    400,
+                    'Validation error',
+                    result.array()?.at(0)?.msg as string,
+                ),
+            );
+            /*             return res.status(400).json({ errors: result.array() });
+             */
         }
         try {
             const tenantId = req.params.id;
@@ -104,13 +121,10 @@ export class TenantController {
                 address,
             });
 
-            const tenant = await this.tenantService.updateTenant(
-                Number(tenantId),
-                {
-                    name,
-                    address,
-                },
-            );
+            await this.tenantService.updateTenant(Number(tenantId), {
+                name,
+                address,
+            });
             res.status(200).json({
                 message: 'Tenant updated successfully',
                 tenant: await this.tenantService.getTenant(Number(tenantId)),

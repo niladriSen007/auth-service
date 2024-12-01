@@ -18,13 +18,27 @@ import authentication from '../../middleware/authentication';
 import { AuthRequest, UserData, UserRegisterRequest } from '../../types';
 import validateRefreshTokens from '../../middleware/validateRefreshTokens';
 import parseRefreshToken from '../../middleware/parseRefreshToken';
+import { TenantService } from '../../services/tenant/TenantService';
+import { Tenant } from '../../entity/Tenant';
 
 const router = express.Router();
 const userRepository = AppDataSource.getRepository(User);
 const refreshTokenRepository = AppDataSource.getRepository(RefreshToken);
 const helperService = new HelperService();
-const userService = new UserService(userRepository, helperService);
+const tenantRepository = AppDataSource.getRepository(Tenant);
+const tenantService = new TenantService(
+    logger,
+    tenantRepository,
+    userRepository,
+);
 const tokenService = new TokenService(refreshTokenRepository);
+const userService = new UserService(
+    userRepository,
+    helperService,
+    tenantService,
+    tenantRepository,
+    tokenService,
+);
 const authController = new AuthController(userService, logger, tokenService);
 
 router.post(

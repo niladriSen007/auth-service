@@ -3,11 +3,13 @@ import {
     CreateDateColumn,
     Entity,
     ManyToOne,
+    OneToMany,
     PrimaryGeneratedColumn,
     UpdateDateColumn,
 } from 'typeorm';
 import { Roles } from './enum/Roles';
 import { Tenant } from './Tenant';
+import { RefreshToken } from './RefreshToken';
 
 @Entity({ name: 'users' })
 export class User {
@@ -25,6 +27,9 @@ export class User {
     roles: Roles[];
     @ManyToOne(() => Tenant)
     tenant: Tenant | null;
+
+    @OneToMany(() => RefreshToken, (refreshToken) => refreshToken.user)
+    refreshTokens: RefreshToken[];
 
     @UpdateDateColumn()
     updatedAt: Date;

@@ -29,7 +29,13 @@ export class AuthController {
             this.logger.error('Validation error', {
                 errors: result.array(),
             });
-            return res.status(400).json({ errors: result.array() });
+            return next(
+                createHttpError(
+                    400,
+                    'Validation error',
+                    result.array()?.at(0)?.msg as string,
+                ),
+            );
         }
         try {
             const { firstName, lastName, email, password, role } = req.body;
@@ -100,7 +106,15 @@ export class AuthController {
             this.logger.error('Validation error', {
                 errors: result.array(),
             });
-            return res.status(400).json({ errors: result.array() });
+            return next(
+                createHttpError(
+                    400,
+                    'Validation error',
+                    result.array()?.at(0)?.msg as string,
+                ),
+            );
+            /*             return res.status(400).json({ errors: result.array() });
+             */
         }
         const { email, password } = req.body;
         this.logger.debug('New request to register a user', {

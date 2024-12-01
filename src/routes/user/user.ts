@@ -17,12 +17,31 @@ import registerValidator from '../../validators/register-validator';
 import { UpdateUserData } from '../../types';
 import updateUserValidator from '../../validators/update-user-validator';
 import listUsersValidator from '../../validators/list-users-validator';
+import { TenantService } from '../../services/tenant/TenantService';
+import { Tenant } from '../../entity/Tenant';
+import { TokenService } from '../../services/token/TokenService';
+import { RefreshToken } from '../../entity/RefreshToken';
 const router = express.Router();
 
 const helperService = new HelperService();
+const tenantRepository = AppDataSource.getRepository(Tenant);
 const userRepository = AppDataSource.getRepository(User);
-const userService = new UserService(userRepository, helperService);
-const userController = new UserController(logger, userService);
+const refreshTokenRepository = AppDataSource.getRepository(RefreshToken);
+const tenantService = new TenantService(
+    logger,
+    tenantRepository,
+    userRepository,
+);
+
+const tokenService = new TokenService(refreshTokenRepository);
+const userService = new UserService(
+    userRepository,
+    helperService,
+    tenantService,
+    tenantRepository,
+    tokenService,
+);
+const userController = new UserController(logger, userService, tokenService);
 
 router.post(
     '/register',
