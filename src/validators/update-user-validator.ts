@@ -1,4 +1,5 @@
 import { checkSchema } from 'express-validator';
+import { UpdateUserData } from '../types';
 
 export default checkSchema({
     email: {
@@ -24,5 +25,22 @@ export default checkSchema({
         },
         notEmpty: true,
         trim: true,
+    },
+    role: {
+        errorMessage: 'Role is required!',
+        notEmpty: true,
+        trim: true,
+    },
+    tenantId: {
+        errorMessage: 'TenantId is required!',
+        trim: true,
+        custom: {
+            options: (value: string, { req }) => {
+                const role = (req as UpdateUserData).body.role;
+                console.log(req.body, 'tenant', typeof value);
+                if (role.includes('ADMIN')) return true;
+                else return !!value;
+            },
+        },
     },
 });
