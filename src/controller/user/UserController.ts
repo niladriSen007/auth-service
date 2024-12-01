@@ -105,26 +105,28 @@ export class UserController {
             return res.status(400).json({ errors: result.array() });
         }
         try {
-            const { firstName, lastName, email } = req.body;
+            const { firstName, lastName, email, role, tenantId } = req.body;
             const id = req.params.id;
             this.logger.debug('New request to update a user', {
                 id,
                 firstName,
                 lastName,
                 email,
-                password: '********',
+                roles: role,
+                tenantId,
             });
 
             const user = await this.userService.updateUser(Number(id), {
                 firstName,
                 lastName,
                 email,
+                role,
+                tenantId,
             } as UpdateUserData);
             this.logger.info('User updated successfully');
             res.status(200).json({
                 user: {
                     ...user,
-                    password: '********',
                 },
             });
         } catch (error) {

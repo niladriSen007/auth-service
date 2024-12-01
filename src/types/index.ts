@@ -15,6 +15,8 @@ export interface UpdateUserData extends Request {
     firstName?: string;
     lastName?: string;
     email?: string;
+    role?: Roles[];
+    tenantId?: number;
 }
 
 export interface UserLoginData {
