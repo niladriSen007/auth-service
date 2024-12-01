@@ -165,7 +165,7 @@ export class UserService {
             roles: data.role ? data.role : user.roles,
             tenant: data.role?.includes(Roles.ADMIN)
                 ? null
-                : data.tenantId
+                : data?.tenantId
                   ? { id: data.tenantId }
                   : null,
         });
