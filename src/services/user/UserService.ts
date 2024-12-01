@@ -126,6 +126,14 @@ export class UserService {
 
         const result = await queryBuilder
             .leftJoinAndSelect('user.tenant', 'tenant')
+            .select([
+                'user.id',
+                'user.firstName',
+                'user.lastName',
+                'user.email',
+                'user.roles',
+                'tenant',
+            ])
             .skip((currentPage - 1) * limit)
             .take(limit)
             .orderBy('user.id', 'DESC')
@@ -143,8 +151,20 @@ export class UserService {
             const error = createHttpError(400, 'User not found');
             throw error;
         }
-        await this.userRepository.update(id, data);
+        /*         console.log('data', data);
+         */ await this.userRepository.update(id, {
+            firstName: data.firstName,
+            lastName: data.lastName,
+            email: data.email,
+            roles: data.role ? data.role : user.roles,
+            tenant: data.role?.includes(Roles.ADMIN)
+                ? null
+                : data.tenantId
+                  ? { id: data.tenantId }
+                  : null,
+        });
         return await this.userRepository.findOne({
+            select: ['id', 'firstName', 'lastName', 'email', 'roles', 'tenant'],
             where: { id },
         });
     }

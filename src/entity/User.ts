@@ -24,7 +24,7 @@ export class User {
     @Column({ type: 'enum', enum: Roles, default: [Roles.CUSTOMER] })
     roles: Roles[];
     @ManyToOne(() => Tenant)
-    tenant: Tenant;
+    tenant: Tenant | null;
 
     @UpdateDateColumn()
     updatedAt: Date;

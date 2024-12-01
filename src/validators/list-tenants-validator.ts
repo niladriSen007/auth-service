@@ -20,7 +20,7 @@ export default checkSchema(
         limit: {
             customSanitizer: {
                 options: (value) => {
-                    return isNaN(Number(value)) ? 6 : Number(value);
+                    return isNaN(Number(value)) ? 3 : Number(value);
                 },
             },
         },
