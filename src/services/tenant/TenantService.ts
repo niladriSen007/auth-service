@@ -3,11 +3,13 @@ import { Logger } from 'winston';
 import { Tenant } from '../../entity/Tenant';
 import createHttpError from 'http-errors';
 import { PaginationQueryPrams, TenantData } from '../../types';
+import { User } from '../../entity/User';
 
 export class TenantService {
     constructor(
         private readonly logger: Logger,
         private readonly tenantRepository: Repository<Tenant>,
+        private readonly userRepository: Repository<User>,
     ) {}
 
     async registerTenant({ name, address }: TenantData) {
@@ -115,7 +117,24 @@ export class TenantService {
             this.logger.info('Deleting tenant');
             const tenant = await this.tenantRepository.findOne({
                 where: { id },
+                relations: {
+                    users: true,
+                },
             });
+
+            const tenantManagers = tenant?.users;
+
+            const unlinkMangersFromTenantsArray = tenantManagers?.map(
+                async (manager) => {
+                    manager.tenant = null;
+                    await this.userRepository.save(manager);
+                },
+            );
+            if (unlinkMangersFromTenantsArray) {
+                await Promise.all(unlinkMangersFromTenantsArray);
+            }
+
+            console.log(tenantManagers, 'tenantManagers', tenant);
 
             if (!tenant) {
                 throw createHttpError(404, 'Tenant not found');

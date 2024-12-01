@@ -8,11 +8,14 @@ import {
 } from '../../types';
 import { matchedData, validationResult } from 'express-validator';
 import { Roles } from '../../entity/enum/Roles';
+import createHttpError from 'http-errors';
+import { TokenService } from '../../services/token/TokenService';
 
 export class UserController {
     constructor(
         private readonly logger: Logger,
         private readonly userService: UserService,
+        private readonly tokenService: TokenService,
     ) {}
 
     async createUsers(
@@ -26,7 +29,15 @@ export class UserController {
             this.logger.error('Validation error', {
                 errors: result.array(),
             });
-            return res.status(400).json({ errors: result.array() });
+            return next(
+                createHttpError(
+                    400,
+                    'Validation error',
+                    result.array()?.at(0)?.msg as string,
+                ),
+            );
+            /*             return res.status(400).json({ errors: result.array() });
+             */
         }
         try {
             const { firstName, lastName, email, password, tenantId } = req.body;
@@ -102,7 +113,15 @@ export class UserController {
             this.logger.error('Validation error', {
                 errors: result.array(),
             });
-            return res.status(400).json({ errors: result.array() });
+            return next(
+                createHttpError(
+                    400,
+                    'Validation error',
+                    result.array()?.at(0)?.msg as string,
+                ),
+            );
+            /*             return res.status(400).json({ errors: result.array() });
+             */
         }
         try {
             const { firstName, lastName, email, role, tenantId } = req.body;
