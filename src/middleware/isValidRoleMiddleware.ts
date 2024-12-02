@@ -11,7 +11,7 @@ export const isValidRoleMiddleware = (roles: string[] = []) => {
                 message: 'User is not authorized roles to do the action',
             });
         }
-        if (roles?.some((role) => role.includes(currentUserRoles[0]))) {
+        if (roles?.some((role) => role === currentUserRoles)) {
             next();
         } else {
             next(
