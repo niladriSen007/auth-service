@@ -41,7 +41,7 @@ export interface UserLoginRequest extends Request {
 export interface AuthRequest extends Request {
     auth: {
         sub: string;
-        roles?: Roles[];
+        roles?: string;
         email?: string;
         id?: number;
     };

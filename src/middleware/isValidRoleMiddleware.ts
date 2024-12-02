@@ -5,13 +5,12 @@ import { AuthRequest } from '../types';
 export const isValidRoleMiddleware = (roles: string[] = []) => {
     return (req: AuthRequest, res: Response, next: NextFunction) => {
         const { roles: currentUserRoles } = req.auth;
-        /*         console.log('USER ROLES', req?.auth);
-         */ if (!currentUserRoles?.length) {
+        if (!currentUserRoles?.length) {
             return res.status(403).json({
                 message: 'User is not authorized roles to do the action',
             });
         }
-        if (roles?.some((role) => role.includes(currentUserRoles[0]))) {
+        if (roles?.some((role) => role === currentUserRoles)) {
             next();
         } else {
             next(
