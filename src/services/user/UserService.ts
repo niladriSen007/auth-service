@@ -82,6 +82,9 @@ export class UserService {
     async login({ email, password }: UserLoginData) {
         const user = await this.userRepository.findOne({
             where: { email },
+            relations: {
+                tenant: true,
+            },
         });
         if (!user) {
             const error = createHttpError(400, 'Invalid email or password');
