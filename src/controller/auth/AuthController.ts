@@ -113,8 +113,6 @@ export class AuthController {
                     result.array()?.at(0)?.msg as string,
                 ),
             );
-            /*             return res.status(400).json({ errors: result.array() });
-             */
         }
         const { email, password } = req.body;
         this.logger.debug('New request to register a user', {
@@ -135,6 +133,9 @@ export class AuthController {
                 sub: String(currentUser.id),
                 email: currentUser.email,
                 roles: currentUser.roles,
+                tenantId: currentUser.tenant
+                    ? String(currentUser.tenant?.id)
+                    : '',
             };
 
             const newRefreshToken =
@@ -181,6 +182,7 @@ export class AuthController {
                 sub: req.auth.sub,
                 email: req.auth.email,
                 roles: req.auth.roles,
+                tenantId: req.auth.tenantId,
             };
 
             const currentUser = await this.userService.getUserById(
