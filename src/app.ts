@@ -20,9 +20,9 @@ app.use(express.static('public'));
 app.use(express.json());
 
 //Routes
-app.use('/api/v1/auth', authRouter);
-app.use('/api/v1/tenants', tenantRouter);
-app.use('/api/v1/users', userRouter);
+app.use('/auth', authRouter);
+app.use('/tenants', tenantRouter);
+app.use('/users', userRouter);
 
 //Global error handler
 app.use(globalErrorHandler);

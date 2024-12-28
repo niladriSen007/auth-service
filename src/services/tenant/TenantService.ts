@@ -54,9 +54,17 @@ export class TenantService {
                 .leftJoinAndSelect('tenant.users', 'users')
                 .skip((currentPage - 1) * limit)
                 .take(limit)
-                .orderBy('tenant.id', 'DESC')
+                .orderBy('tenant.id', 'ASC')
                 .getManyAndCount();
-            return result;
+            const allTenants = [
+                ...result[0],
+                {
+                    id: '',
+                    name: 'All',
+                },
+            ];
+            console.log(result, 'result');
+            return [allTenants, result[1] + 1];
         } catch (error) {
             console.log(error);
             throw createHttpError(

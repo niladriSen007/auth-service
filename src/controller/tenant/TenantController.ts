@@ -69,7 +69,7 @@ export class TenantController {
                 currentPage: validatedQuery.currentPage as number,
                 limit: validatedQuery.limit as number,
                 totalPageCount: Math.ceil(
-                    count / (validatedQuery.limit as number),
+                    (count as number) / (validatedQuery.limit as number),
                 ),
             });
         } catch (error) {
